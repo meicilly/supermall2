@@ -5,7 +5,7 @@ module.exports = {
           alias: {
             components: '@/components',
             common:'@/common',
-            network:"@/network",
+            "network":"@/network",
             assets:'@/assets',
             views:'@/views'
           }
