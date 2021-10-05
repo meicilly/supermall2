@@ -1,48 +1,117 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+
+    <scroll class="content">
     <home-swiper :banners="banners"></home-swiper>
     <home-recommand-view :recommends="recommends"/>
     <feature-view/>
     <tab-control class="tab-control"
     :titles="['流行','新款','精选']" @tabClick="tabClick"/>
     <goods-list :goods="showGoods"/>
-    <li>1</li>
-    <li>1</li>
-    <li>w</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
-    <li>1</li>
+    </scroll>
+<!-- <ul>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+  <li>jdia</li>
+</ul> -->
   </div>
 </template>
 
@@ -55,7 +124,7 @@ import {getHomeMultidata,getHomeGoods} from '@/network/home.js'
 import HomeRecommandView from './childComps/HomeRecommandView.vue'
 import FeatureView from './childComps/FeatureView.vue'
 import GoodsList from '../../components/content/goods/GoodsList.vue'
-
+import Scroll from '../../components/common/scroll/Scroll.vue'
   export default  {
     components:{
       NavBar,
@@ -63,7 +132,8 @@ import GoodsList from '../../components/content/goods/GoodsList.vue'
       HomeRecommandView,
       FeatureView,
       TabControl,
-        GoodsList,
+      GoodsList,
+      Scroll
     },
     data(){
       return{
@@ -126,6 +196,9 @@ import GoodsList from '../../components/content/goods/GoodsList.vue'
 <style scoped>
 #home{
   padding-top: 44px;
+  /* 视口高度 */
+  height: 100vh;
+  position: relative;
 }
 .home-nav{
   background-color: var(--color-tint);
@@ -142,4 +215,18 @@ import GoodsList from '../../components/content/goods/GoodsList.vue'
   background-color: #fff;
   z-index: 9;
 }
+.content{
+  /* height: 300px; */
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+}
+/* .content{
+  height: calc(100% - 93px);
+  overflow: hidden;
+  margin-top: 44px;
+} */
 </style>
