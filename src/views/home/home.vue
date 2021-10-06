@@ -2,116 +2,20 @@
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 
-    <scroll class="content">
-    <home-swiper :banners="banners"></home-swiper>
+    <scroll class="content"
+            ref="scroll"
+            :probeType="3"
+             @scroll="contenScroll"
+             :pullUpLoad="true"
+             @pullingUp="loadMore">
+    <home-swiper :banners="banners" ></home-swiper>
     <home-recommand-view :recommends="recommends"/>
     <feature-view/>
     <tab-control class="tab-control"
     :titles="['流行','新款','精选']" @tabClick="tabClick"/>
     <goods-list :goods="showGoods"/>
     </scroll>
-<!-- <ul>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-  <li>jdia</li>
-</ul> -->
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -125,6 +29,7 @@ import HomeRecommandView from './childComps/HomeRecommandView.vue'
 import FeatureView from './childComps/FeatureView.vue'
 import GoodsList from '../../components/content/goods/GoodsList.vue'
 import Scroll from '../../components/common/scroll/Scroll.vue'
+import BackTop from '../../components/content/backTop/backTop.vue'
   export default  {
     components:{
       NavBar,
@@ -133,7 +38,9 @@ import Scroll from '../../components/common/scroll/Scroll.vue'
       FeatureView,
       TabControl,
       GoodsList,
-      Scroll
+      Scroll,
+      BackTop,
+
     },
     data(){
       return{
@@ -144,7 +51,8 @@ import Scroll from '../../components/common/scroll/Scroll.vue'
           'new':{page: 0,list:[]},
           'sell': {page:0,list:[]}
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isShowBackTop: false
       }
     },
     created(){
@@ -169,6 +77,10 @@ import Scroll from '../../components/common/scroll/Scroll.vue'
           //console.log(res)
          this.goods[type].list.push(...res.data.list)
          this.goods[type].page += 1
+         //上拉加载完后还需要主动调用方法
+         //this.$refs.scroll.scroll.finishPullUp()
+         this.$refs.scroll.finishPullUp()
+
       })
       },
       tabClick(index){
@@ -183,6 +95,23 @@ import Scroll from '../../components/common/scroll/Scroll.vue'
             this.currentType = 'sell'
             break
         }
+      },
+      backClick(){
+       this.$refs.scroll.scrollTo(0,0)
+       //console.log(this.$refs.scroll.scroll)
+       //this.$refs.scroll.scroll.startY === 0
+      },
+      //拿到滚动的数据
+      contenScroll(position){
+        //console.log(position)
+        this.isShowBackTop = -position.y > 1000
+      },
+      //加载更多
+      loadMore(){
+        //console.log("上拉加载更多")
+        this.getHomeGoods(this.currentType)
+        //重新计算高度
+        //this.$refs.scroll.scroll.refresh()
       }
     },
     computed:{

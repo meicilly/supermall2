@@ -4,7 +4,7 @@ import VueRouter from "vue-router"
 const Home = () => import('../views/home/home.vue')
 const Category = () => import('../views/category/category.vue')
 const Profile = () => import('../views/profile/profile.vue')
-const Cart = () => import('../views/cart/cart.vue')
+const Cart = () => import('../views/profile/profile.vue')
 //1.安装插件
 Vue.use(VueRouter)
 //2.创建路由
