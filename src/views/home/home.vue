@@ -63,7 +63,26 @@ import BackTop from '../../components/content/backTop/backTop.vue'
       this.getHomeGoods('new'),
       this.getHomeGoods('sell')
     },
+    mounted(){
+      const refresh = this.debounce(this.$refs.scroll.refresh,200)
+       //监听item中图片加载完成
+      this.$bus.$on('itemImageLoad',()=>{
+        //console.log('ad')
+        //this.$refs.scroll.refresh()
+        refresh()
+      })
+    },
     methods:{
+      //防抖函数
+      debounce(func,delay){
+        let timer = null
+        return function(...args){
+          if(timer) clearTimeout(timer)
+          timer = setTimeout(()=>{
+            func.apply(this,args)
+          },delay)
+        }
+      },
       getHomeMultidata(){
         getHomeMultidata().then(res =>{
         //console.log(res.data)

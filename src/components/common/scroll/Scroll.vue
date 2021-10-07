@@ -45,13 +45,19 @@ import BScroll from 'better-scroll'
         this.$emit('pullingUp')
       })
       this.scroll.scrollTo(0,0)
+
     },
     methods:{
       scrollTo(x,y,time = 300){
-        this.scroll.scrollTo(x,y,time)
+        this.scroll && this.scroll.scrollTo(x,y,time)
       },
       finishPullUp(){
-        this.scroll.finishPullUp()
+       this.scroll.finishPullUp()
+      },
+      //解决bug
+      refresh(){
+        console.log("11")
+        this.scroll && this.scroll.refresh()
       }
     }
   }
