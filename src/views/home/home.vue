@@ -1,17 +1,19 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-
+    <tab-control  ref="tabControl1"
+    :titles="['流行','新款','精选']" @tabClick="tabClick" class="tab-control"
+    v-show="isTabFixed"/>
     <scroll class="content"
             ref="scroll"
             :probeType="3"
              @scroll="contenScroll"
              :pullUpLoad="true"
              @pullingUp="loadMore">
-    <home-swiper :banners="banners" ></home-swiper>
+    <home-swiper :banners="banners" @imageLoad="imageLoad"></home-swiper>
     <home-recommand-view :recommends="recommends"/>
     <feature-view/>
-    <tab-control class="tab-control"
+    <tab-control  ref="tabControl2"
     :titles="['流行','新款','精选']" @tabClick="tabClick"/>
     <goods-list :goods="showGoods"/>
     </scroll>
@@ -30,6 +32,8 @@ import FeatureView from './childComps/FeatureView.vue'
 import GoodsList from '../../components/content/goods/GoodsList.vue'
 import Scroll from '../../components/common/scroll/Scroll.vue'
 import BackTop from '../../components/content/backTop/backTop.vue'
+
+import {debounce} from '../../common/utils/utils'
   export default  {
     components:{
       NavBar,
@@ -52,7 +56,10 @@ import BackTop from '../../components/content/backTop/backTop.vue'
           'sell': {page:0,list:[]}
         },
         currentType: 'pop',
-        isShowBackTop: false
+        isShowBackTop: false,
+        tabOffsetTop: 0,
+        isTabFixed:false,
+        saveY:0
       }
     },
     created(){
@@ -62,27 +69,25 @@ import BackTop from '../../components/content/backTop/backTop.vue'
       this.getHomeGoods('pop')
       this.getHomeGoods('new'),
       this.getHomeGoods('sell')
+
     },
     mounted(){
-      const refresh = this.debounce(this.$refs.scroll.refresh,200)
+      //1.图片加载完成的事件监听
+      const refresh = debounce(this.$refs.scroll.refresh,200)
        //监听item中图片加载完成
       this.$bus.$on('itemImageLoad',()=>{
         //console.log('ad')
         //this.$refs.scroll.refresh()
         refresh()
       })
+       //2.获取tabControl的offsetTop
+       //所有的组件都有$el
+      //this.tabOffsetTop = this.$refs.tabControl
+      //console.log(this.$refs.tabControl.$el.offsetTop)
     },
     methods:{
       //防抖函数
-      debounce(func,delay){
-        let timer = null
-        return function(...args){
-          if(timer) clearTimeout(timer)
-          timer = setTimeout(()=>{
-            func.apply(this,args)
-          },delay)
-        }
-      },
+
       getHomeMultidata(){
         getHomeMultidata().then(res =>{
         //console.log(res.data)
@@ -114,6 +119,8 @@ import BackTop from '../../components/content/backTop/backTop.vue'
             this.currentType = 'sell'
             break
         }
+        this.$refs.tabControl1.currentIndex = index
+        this.$refs.tabControl2.currentIndex = index
       },
       backClick(){
        this.$refs.scroll.scrollTo(0,0)
@@ -123,7 +130,10 @@ import BackTop from '../../components/content/backTop/backTop.vue'
       //拿到滚动的数据
       contenScroll(position){
         //console.log(position)
+        //1.判断BackTop是否显示
         this.isShowBackTop = -position.y > 1000
+        //2.决定tabcontrol是否吸顶
+        this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       //加载更多
       loadMore(){
@@ -131,12 +141,27 @@ import BackTop from '../../components/content/backTop/backTop.vue'
         this.getHomeGoods(this.currentType)
         //重新计算高度
         //this.$refs.scroll.scroll.refresh()
+      },
+      //计算图片加载完成后的高度
+      imageLoad(){
+       //console.log(this.$refs.tabControl.$el.offsetTop)
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
       }
-    },
+      },
     computed:{
       showGoods(){
         return this.goods[this.currentType].list
       }
+    },
+    activated(){
+      //console.log("进入")
+      this.$refs.scroll.scrollTo(0,this.saveY,0)
+      this.$refs.scroll.refresh()
+    },
+    deactivated(){
+      //console.log("离开")
+      this.saveY = this.$refs.scroll.getScrollY()
+      //console.log(this.saveY)
     }
   }
 </script>
@@ -158,10 +183,13 @@ import BackTop from '../../components/content/backTop/backTop.vue'
   z-index: 9;
 }
 .tab-control{
-  position: sticky;
+  /* position: sticky;
   top:44px;
   background-color: #fff;
+  z-index: 9; */
+  position: relative;
   z-index: 9;
+  background-color: aliceblue;
 }
 .content{
   /* height: 300px; */
@@ -177,4 +205,5 @@ import BackTop from '../../components/content/backTop/backTop.vue'
   overflow: hidden;
   margin-top: 44px;
 } */
+
 </style>

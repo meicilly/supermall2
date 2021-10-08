@@ -56,8 +56,11 @@ import BScroll from 'better-scroll'
       },
       //解决bug
       refresh(){
-        console.log("11")
+        //console.log("11")
         this.scroll && this.scroll.refresh()
+      },
+      getScrollY(){
+        return this.scroll ? this.scroll.y : 0
       }
     }
   }
