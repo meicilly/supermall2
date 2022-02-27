@@ -1,61 +1,65 @@
 <template>
   <div class="tab-control">
-      <div v-for="(item,index) in titles"
-      class="tab-control-item"
-      @click="itemClick(index)"
-      :class="{active:index === currentIndex}" :key="index">
-        <span>{{item}}</span>
-      </div>
+    <div class="tab-control-item"
+         :class="{active: currentIndex === index}"
+         @click="itemClick(index)"
+         v-for="(item, index) in titles">
+      <span>{{item}}</span>
+    </div>
   </div>
 </template>
 
 <script>
-  export default {
-    props:{
-      titles:{
-        type: Array,
-        default(){
-          return []
+	export default {
+		name: "TabControl",
+    props: {
+		  titles: {
+		    type: Array,
+        default() {
+		      return []
         }
       }
     },
-    data(){
-      return{
-        currentIndex:0
+    data: function () {
+      return {
+        currentIndex: 0
       }
     },
-    methods:{
-      itemClick(index){
-        //console.log(index)
-        this.currentIndex = index
-        //console.log(this.currentIndex)
-        this.$emit('tabClick',index)
+    methods: {
+      itemClick: function (index) {
+        // 1.改变currentIndex
+        this.currentIndex = index;
+
+        // 2.发出事件
+        this.$emit('itemClick', index)
       }
     }
-  }
+	}
 </script>
 
-<style lang="css">
-.tab-control{
-  display: flex;
-  justify-content: space-around;
-  text-align: center;
-}
-.tab-control-item{
-  height: 40px;
-  line-height: 40px;
-  font-size: 16px;
-}
-/* .tab-control-item :hover{
-  color: pink;
-  padding-bottom: 2px;
-  border-bottom: 4px solid pink;
-} */
-.active{
-  color: var(--color-high-text);
+<style scoped>
+  .tab-control {
+    display: flex;
+    text-align: center;
+    line-height: 40px;
+    font-size: 15px;
+    background-color: #fff;
+    z-index: 9;
+  }
 
-}
-.active span{
-  border-bottom: 3px solid var(--color-tint);
-}
+  .tab-control-item {
+    flex: 1;
+  }
+
+  .tab-control-item span {
+    padding: 5px;
+  }
+
+  .active {
+    color: var(--color-high-text);
+  }
+
+  .active span {
+    border-bottom: 2px solid var(--color-high-text);
+  }
 </style>

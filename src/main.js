@@ -1,12 +1,18 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from "./router"
+import router from './router'
+import store from './store'
+import VueLazyLoad from 'vue-lazyload'
 
 Vue.config.productionTip = false
-//原型挂载vue实例
-Vue.prototype.$bus = new Vue()
+
+Vue.use(VueLazyLoad, {
+  preLoad: 1,
+  loading: require('assets/img/common/placeholder.png')
+})
+
 new Vue({
-  el:"#app",
-  router,
   render: h => h(App),
+  store,
+  router
 }).$mount('#app')
